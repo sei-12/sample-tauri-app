@@ -43,7 +43,7 @@ jobs:
 
       - name: dispatch prepare
         run: |
-          curl -sL $({steps.tauri_build.outputs.artifactPaths}) | openssl sha256 | awk '{print $2}' > checksum.txt
+          cat $({ steps.tauri_build.outputs.artifactPaths }) | openssl sha256 | awk '{print $2}' > checksum.txt
           echo "sha=$(cat checksum.txt)" >> $GITHUB_ENV
 
       - name: dispatch to homebrew/formulae
