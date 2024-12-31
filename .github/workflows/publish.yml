@@ -30,6 +30,7 @@ jobs:
       - name: install frontend dependencies
         run: yarn --frozen-lockfile && yarn install --network-timeout 600000 # change this to npm or pnpm depending on which one you use
       - uses: tauri-apps/tauri-action@v0
+        id: tauri_build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -42,7 +43,7 @@ jobs:
 
       - name: dispatch prepare
         run: |
-          curl -sL $url | openssl sha256 | awk '{print $2}' > checksum.txt
+          curl -sL $({steps.tauri_build.outputs.artifactPaths}) | openssl sha256 | awk '{print $2}' > checksum.txt
           echo "sha=$(cat checksum.txt)" >> $GITHUB_ENV
 
       - name: dispatch to homebrew/formulae
@@ -51,4 +52,4 @@ jobs:
           token: ${{ secrets.HOMEBREW_REPO_GITHUB_TOKEN }}
           repository: sei-12/homebrew-formulae
           event-type: update
-          client-payload: '{"version": "${{ env.version }}", "sha": "${{ env.sha }}"}'
+          client-payload: '{"version": "${{steps.tauri_build.outputs.appVersion}}", "sha": "${{ env.sha }}"}'
