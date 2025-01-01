@@ -44,9 +44,10 @@ jobs:
       - name: dispatch prepare
         run: |
           cat $({ steps.tauri_build.outputs.artifactPaths }) | openssl sha256 | awk '{print $2}' > checksum.txt
+          cat $({ steps.tauri_build.outputs.releaseUploadUrl }) > url.txt
           echo "sha=$(cat checksum.txt)" >> $GITHUB_ENV
+          echo "url=$(cat url.txt)" >> $GITHUB_ENV
           echo "sha=$(cat checksum.txt)"
-          echo "url=$({ steps.tauri_build.outputs.releaseUploadUrl })" >> $GITHUB_ENV
 
       - name: dispatch to homebrew/formulae
         uses: peter-evans/repository-dispatch@v2
@@ -54,4 +55,4 @@ jobs:
           token: ${{ secrets.HOMEBREW_REPO_GITHUB_TOKEN }}
           repository: sei-12/homebrew-formulae
           event-type: update
-          client-payload: '{"version": "${{steps.tauri_build.outputs.appVersion}}", "sha": "${{ env.sha }}", "url": "${{ env.url}}"}'
+          client-payload: '{"version": "${{steps.tauri_build.outputs.appVersion}}", "sha": "${{ env.sha }}", "upload_url": "${{steps.tauri_build.outputs.releaseUploadUrl}}"}'
