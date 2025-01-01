@@ -53,5 +53,5 @@ jobs:
         with:
           token: ${{ secrets.HOMEBREW_REPO_GITHUB_TOKEN }}
           repository: sei-12/homebrew-formulae
-          event-type: update
+          event-type: update-sample-tauri-app
           client-payload: '{"version": "${{steps.tauri_build.outputs.appVersion}}", "sha": "${{ env.sha }}", "upload_url": "${{steps.tauri_build.outputs.releaseUploadUrl}}"}'
