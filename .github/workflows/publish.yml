@@ -1,8 +1,9 @@
 name: 'publish'
+
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'app-v*'
 
 jobs:
   publish-tauri:
@@ -44,9 +45,7 @@ jobs:
       - name: dispatch prepare
         run: |
           cat $({ steps.tauri_build.outputs.artifactPaths }) | openssl sha256 | awk '{print $2}' > checksum.txt
-          cat $({ steps.tauri_build.outputs.releaseUploadUrl }) > url.txt
           echo "sha=$(cat checksum.txt)" >> $GITHUB_ENV
-          echo "url=$(cat url.txt)" >> $GITHUB_ENV
           echo "sha=$(cat checksum.txt)"
 
       - name: dispatch to homebrew/formulae
